@@ -26,9 +26,9 @@ dependencies {
 
     implementation("io.springfox:springfox-swagger2:2.6.1")
     implementation("io.springfox:springfox-swagger-ui:2.6.1")
+    implementation("junit:junit:4.12")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework:spring-mock:2.0.8")
 
     implementation("com.google.code.gson:gson:2.8.9")
 

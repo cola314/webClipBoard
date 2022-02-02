@@ -58,7 +58,9 @@ class FileRepository
 
     fun getText(file: File): String {
         val fi = java.io.File(getFilePath(file))
-        return fi.inputStream().bufferedReader().readText()
+        fi.inputStream().bufferedReader().use {
+            return it.readText()
+        }
     }
 
     fun getFileStream(file: File): InputStream {
