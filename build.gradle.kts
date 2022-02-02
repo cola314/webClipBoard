@@ -29,6 +29,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework:spring-mock:2.0.8")
+
+    implementation("com.google.code.gson:gson:2.8.9")
+
 }
 
 tasks.withType<KotlinCompile> {
