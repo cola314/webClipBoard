@@ -1,6 +1,7 @@
 package webclipboard.demo.web.config
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import webclipboard.demo.domain.file.FileFactory
@@ -23,6 +24,6 @@ class FileConfig {
                 filenameCodec = filenameCodec)
     }
 
-    val storageLocation
-        get() = "E:/storage"
+    @Value("\${storage.path}")
+    val storageLocation: String = ""
 }
