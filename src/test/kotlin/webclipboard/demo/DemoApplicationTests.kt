@@ -10,6 +10,8 @@ import webclipboard.demo.web.config.FileConfig
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.runners.MethodSorters
+import org.springframework.mock.web.MockMultipartFile
+import java.nio.file.Paths
 
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -66,4 +68,23 @@ class DemoApplicationTests {
         assertFalse(result)
     }
 
+    @Test
+    fun upload_file_and_download_file_then_file_contents_are_same() {
+        val user = "user"
+        val content = "hello world"
+        val fi = Paths.get(fileConfig.storageLocation, "test.txt").toFile()
+        fi.createNewFile()
+        fi.outputStream().bufferedWriter().use {
+            it.write(content)
+        }
+        val file = MockMultipartFile("test.txt", fi.inputStream())
+
+        val id = fileService.uploadFile(file, user)
+        val input = fileService.downloadFile(id, user)
+
+        input.bufferedReader().use {
+            assertEquals(content, it.readText())
+        }
+        assertEquals(1, fileService.getFiles("user").count())
+    }
 }
