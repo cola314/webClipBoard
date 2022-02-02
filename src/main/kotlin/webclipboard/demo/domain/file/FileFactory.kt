@@ -2,15 +2,17 @@ package webclipboard.demo.domain.file
 
 import com.google.gson.Gson
 import org.springframework.web.multipart.MultipartFile
+import webclipboard.demo.infra.FilenameCodec
 import webclipboard.demo.web.config.FileConfig
 import java.nio.charset.Charset
 import java.nio.file.Paths
 import java.util.*
 
 class FileFactory constructor(
-    val idGenerator: IdGenerator,
-    val hashGenerator: HashGenerator,
-    val storageLocation: String
+    private val idGenerator: IdGenerator,
+    private val hashGenerator: HashGenerator,
+    private val storageLocation: String,
+    private val filenameCodec: FilenameCodec
 ) {
 
     fun createTextFile(content: String, creator: String): File {
@@ -22,10 +24,10 @@ class FileFactory constructor(
     }
 
     fun fromFilename(filename: String): File? {
-        try {
-            return decodePath(filename)
+        return try {
+            filenameCodec.decode(filename)
         } catch (_: Exception) {
-            return null
+            null
         }
     }
 
@@ -36,25 +38,15 @@ class FileFactory constructor(
                 type = FileType.File,
                 hash = null)
         try {
-            val destPathWithoutHash = Paths.get(storageLocation, encodePath(file))
+            val destPathWithoutHash = Paths.get(storageLocation, filenameCodec.encode(file))
             multiPartFile.transferTo(destPathWithoutHash)
 
             file.hash = hashGenerator.generateFromFile(destPathWithoutHash)
             java.io.File(destPathWithoutHash.toUri()).renameTo(
-                    java.io.File(Paths.get(storageLocation, encodePath(file)).toUri()))
+                    java.io.File(Paths.get(storageLocation, filenameCodec.encode(file)).toUri()))
         } catch (_: Exception) {
 
         }
         return file
-    }
-
-    private fun encodePath(file: File): String {
-        return String(Base64.getEncoder().encode(Gson().toJson(file).encodeToByteArray()),
-                Charset.forName("UTF-8"))
-    }
-
-    private fun decodePath(str: String): File {
-        val json = String(Base64.getDecoder().decode(str), Charset.forName("UTF-8"))
-        return Gson().fromJson(json, File::class.java)
     }
 }
