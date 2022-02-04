@@ -2,6 +2,47 @@
 
 - 간단한 텍스트/파일을 저장하는 API 서버
 
+## 빌드
+
+### Requirement
+
+- node 14.x
+- yarn
+- java jdk 8
+- docker
+
+#### static 파일
+
+```sh
+WORKSPACE="./front/webclipboard"
+OUTPUT_DIR="../../src/main/resources/static/"
+
+cd $WORKSPACE
+
+yarn install
+CI=false yarn run build
+
+mkdir -p $OUTPUT_DIR
+cp -r build/* $OUTPUT_DIR
+```
+
+#### gradle
+
+```sh
+./gradlew clean build --exclude-task test
+```
+
+#### 도커
+
+- EXPOSE: 80/tcp, 443/tcp
+- 환경 변수
+
+| KEY                | Description             | Example              |
+| ------------------ | ----------------------- | -------------------- |
+| STORAGE_PATH       | 파일 저장 경로          | /data/storage        |
+| KEY_STORE          | PKCS12 형식 인증서 파일 | /ssl/cert-bundle.p12 |
+| KEY_STORE_PASSWORD | 인증서 비밀번호         | password             |
+
 ## 저장 형식
 
 - 파일명에 파일 ID, 타입, 만든이, 상태를 저장
@@ -120,10 +161,9 @@
 
 #### Response
 
-| Status Code      | Description        |
-| ---------------- | ------------------ |
-| 200 OK           | 성공               |
-| 401 Unauthorized | 파일 만든이가 아님 |
+| Status Code | Description |
+| ----------- | ----------- |
+| 200 OK      | 성공        |
 
 성공시 id 반환
 
