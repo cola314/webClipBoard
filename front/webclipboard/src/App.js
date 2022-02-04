@@ -53,7 +53,9 @@ const App = () => {
         </div>
         <TextSharePage isVisible={currentTabIndex === 0} username={username} />
         <FileSharePage isVisible={currentTabIndex === 1} username={username} />
-        <FileListPage isVisible={currentTabIndex === 2} username={username} />
+        {currentTabIndex === 2 && (
+          <FileListPage isVisible={true} username={username} />
+        )}
         <SettingPage
           isVisible={currentTabIndex === 3}
           username={username}
