@@ -85,7 +85,10 @@ const FileItemPanel = ({ file }) => {
 
 const FileListPage = ({ isVisible, username }) => {
   const [files, setFiles] = useState([]);
+
   useEffect(() => {
+    if (username.trim() === "") return;
+
     fileService
       .getFiles(username)
       .then(res => {
@@ -95,6 +98,7 @@ const FileListPage = ({ isVisible, username }) => {
         alert(`파일 로드 실패\n${err}`);
       });
   }, [username]);
+
   return (
     <div className={isVisible ? "" : "is-hidden"}>
       <div className="field">
