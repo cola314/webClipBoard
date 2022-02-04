@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { copyTextToClipboard } from "../Util/clipboard";
 import * as fileService from "../Service/fileService";
 
-const TextItemPanel = ({ file }) => {
+const TextItemPanel = ({ file, refresh }) => {
   const [text, setText] = useState("로드 중...");
   useEffect(() => {
     fileService
@@ -24,6 +24,19 @@ const TextItemPanel = ({ file }) => {
         alert(`복사에 실패했습니다\n${err}`);
       });
   };
+  const onDeleteClick = () => {
+    fileService
+      .deleteFile(file.creator, file.id)
+      .then(res => {
+        alert("텍스트 삭제 완료");
+        console.log(`텍스트 삭제 완료 ${file.id}`);
+        refresh();
+      })
+      .catch(err => {
+        alert(`텍스트 삭제 실패\n${err}`);
+        console.error(err);
+      });
+  };
   return (
     <div className="box">
       <div className="field">
@@ -39,6 +52,11 @@ const TextItemPanel = ({ file }) => {
       </div>
       <div className="field is-grouped is-grouped-right">
         <div className="control">
+          <button className="button is-danger" onClick={onDeleteClick}>
+            삭제
+          </button>
+        </div>
+        <div className="control">
           <button className="button is-info" onClick={onCopyClicked}>
             내용 복사
           </button>
@@ -48,7 +66,7 @@ const TextItemPanel = ({ file }) => {
   );
 };
 
-const FileItemPanel = ({ file }) => {
+const FileItemPanel = ({ file, refresh }) => {
   const [fileUrl, setFileUrl] = useState("#");
   useEffect(() => {
     setFileUrl(fileService.getDownloadFileUrl(file.creator, file.id));
@@ -60,6 +78,19 @@ const FileItemPanel = ({ file }) => {
       })
       .catch(err => {
         alert(`복사에 실패했습니다\n${err}`);
+      });
+  };
+  const onDeleteClick = () => {
+    fileService
+      .deleteFile(file.creator, file.id)
+      .then(res => {
+        alert("파일 삭제 완료");
+        console.log(`파일 삭제 완료 ${file.id}`);
+        refresh();
+      })
+      .catch(err => {
+        alert(`파일 삭제 실패\n${err}`);
+        console.error(err);
       });
   };
   return (
@@ -74,6 +105,11 @@ const FileItemPanel = ({ file }) => {
       </div>
       <div className="field is-grouped is-grouped-right">
         <div className="control">
+          <button className="button is-danger" onClick={onDeleteClick}>
+            삭제
+          </button>
+        </div>
+        <div className="control">
           <button className="button is-info" onClick={onCopyClicked}>
             주소 복사
           </button>
@@ -86,7 +122,7 @@ const FileItemPanel = ({ file }) => {
 const FileListPage = ({ isVisible, username }) => {
   const [files, setFiles] = useState([]);
 
-  useEffect(() => {
+  const refresh = username => {
     if (username.trim() === "") return;
 
     fileService
@@ -97,6 +133,10 @@ const FileListPage = ({ isVisible, username }) => {
       .catch(err => {
         alert(`파일 로드 실패\n${err}`);
       });
+  };
+
+  useEffect(() => {
+    refresh(username);
   }, [username]);
 
   return (
@@ -115,9 +155,17 @@ const FileListPage = ({ isVisible, username }) => {
       </div>
       {files.map(file => {
         return file.type === "text" ? (
-          <TextItemPanel key={file.id} file={file} />
+          <TextItemPanel
+            key={file.id}
+            file={file}
+            refresh={() => refresh(username)}
+          />
         ) : (
-          <FileItemPanel key={file.id} file={file} />
+          <FileItemPanel
+            key={file.id}
+            file={file}
+            refresh={() => refresh(username)}
+          />
         );
       })}
     </div>
