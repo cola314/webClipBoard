@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: test
+
+---
+spring:
+  profiles: test
+
+storage:
+  path: E:/storage
+---
+
+spring:
+  profiles: production
+
+storage:
+  path: ${STORAGE_PATH}
+
+server:
+  port: 443
+  ssl:
+    key-store: ${KEY_STORE}
+    key-store-password: ${KEY_STORE_PASSWORD}
+    key-store-type: PKCS12
+  http:
+    port: 80
