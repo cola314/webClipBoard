@@ -7,9 +7,9 @@ RUN CI=false yarn run build
 FROM amazoncorretto:8-al2-jdk AS build
 WORKDIR /app
 COPY . .
-ARG OUTPUT_DIR=src/main/resources/static/
+ARG OUTPUT_DIR=src/main/resources/static
 RUN mkdir -p $OUTPUT_DIR
-COPY --from=node-build /app/build/* $OUTPUT_DIR
+COPY --from=node-build /app/build $OUTPUT_DIR
 RUN ./gradlew clean build --exclude-task test
 
 FROM amazoncorretto:8
