@@ -12,7 +12,10 @@ storage:
 
 spring:
   profiles: production
-
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 storage:
   path: ${STORAGE_PATH}
 
